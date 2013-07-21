@@ -204,6 +204,10 @@ public class JerryUser {
 		}
 	}
 
+	public void did(String attr) {
+		did(attr, 1);
+	}
+
 	public JerryUser(String n_user_id, String n_device_id, JSONObject new_state) {
 		user_id = n_user_id;
 		device_id = n_device_id;

@@ -70,22 +70,22 @@ public class JerryUserTest {
 		// // do we have credits to share photos privately?
 		user.did("share_photo_private", 1);
 		// mocky.calls.should.have.length_of(1)
-		// user.can("share_photo_private").should.be.ok
-		// user.did("share_photo_private", 2)
+		assertThat(user.can("share_photo_private")).isTrue();
+		user.did("share_photo_private", 2);
 		// mocky.calls.should.have.length_of(2)
-		// user.can("share_photo_private").should.be.false
+		assertThat(user.can("share_photo_private")).isFalse();
 
 		// // not defined: default is deny
-		// user.can("view_photo").should_not.be.ok
-		// user.can("view_photo", 10).should_not.be.ok
+		assertThat(user.can("view_photo")).isFalse();
+		assertThat(user.can("view_photo", 10)).isFalse();
 
 		// // lets modify and play again:
-		// user.did("upload_photo")
+		user.did("upload_photo");
 		// mocky.calls.should.have.length_of(3)
-		// user.can("upload_photo").should.be.ok
-		// user.can("upload_photo", 2).should.be.ok
-		// user.did("upload_photo", 2)
+		assertThat(user.can("upload_photo")).isTrue();
+		assertThat(user.can("upload_photo", 2)).isTrue();
+		user.did("upload_photo", 2);
 		// mocky.calls.should.have.length_of(4)
-		// user.can("upload_photo").should_not.be.ok
+		assertThat(user.can("upload_photo")).isFalse();
     }
 }
