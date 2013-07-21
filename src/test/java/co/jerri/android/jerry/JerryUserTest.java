@@ -54,10 +54,10 @@ public class JerryUserTest {
 		assertThat(user.can("upload_photo", 3)).isTrue();
 		assertThat(user.can("upload_photo", 4)).isFalse();
 
-		// assertThat(user.can("share_photo")).isTrue();
-		// assertThat(user.can("share_photo", 9)).isTrue();
-		// // total amount kicks in though daily woud allow it
-		// assertThat(user.can("share_photo", 12)).isFalse();
+		assertThat(user.can("share_photo")).isTrue();
+		assertThat(user.can("share_photo", 9)).isTrue();
+	    // total amount kicks in though daily woud allow it
+		assertThat(user.can("share_photo", 12)).isFalse();
 
 		// // do we have credits to share photos privately?
 		// assertThat(user.can("share_photo_private")).isTrue();
