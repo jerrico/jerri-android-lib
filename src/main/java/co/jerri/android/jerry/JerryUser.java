@@ -10,16 +10,6 @@ import java.util.logging.Logger;
 
 class Restriction {
 
-	protected JSONObject settings;
-
-	public Restriction() {
-		settings = null;
-	}
-
-	public Restriction(JSONObject new_settings){
-		settings = new_settings;
-	}
-
 	public boolean allows(String attr, int change){
 		return false;
 	}
@@ -48,6 +38,62 @@ class BinaryRestriction extends Restriction {
 		return allow;
 	}
 }
+
+class TotalAmountRestriction extends Restriction {
+	private int left;
+
+	public TotalAmountRestriction(JSONObject settings){
+		left = settings.optInt("left", 0);
+	}
+
+	public boolean allows(String attr, int change){
+		if (left <= 0){
+			return false;
+		}
+
+        return (left - change) >= 0;
+	}
+
+	public void did(String attr, int change){
+		left -= change;
+	}
+}
+
+class PerTimeRestriction extends Restriction{
+	
+	private int left;
+
+	public PerTimeRestriction(JSONObject settings){
+		left = settings.optInt("left", 0);
+	}
+
+	public boolean allows(String attr, int change){
+		if (left <= 0){
+			return false;
+		}
+
+        return (left - change) >= 0;
+	}
+
+	public void did(String attr, int change){
+		left -= change;
+	}
+}
+
+/*
+
+class AccountAmountRestriction(Restriction):
+    # FIME: needs to be implemented
+    def allows(self, attr, change, *args, **kwargs):
+        try:
+            return self.user.account[self.account_item] - \
+                    (self.quantity_change * change) > 0
+        except (KeyError):
+            return False
+
+    def did(self, attr, change, *args, **kwargs):
+        self.user.account[self.account_item] -= (self.quantity_change * change)
+*/
 
 public class JerryUser {
 	public String user_id;
@@ -92,9 +138,13 @@ public class JerryUser {
 
 				// A map here would be nicer of course
 				if (className.equals("BinaryRestriction")) {
-					LOGGER.info("pling");
 					restObj = new BinaryRestriction(restJSON);
+				} else if (className.equals("PerTimeRestriction")) {
+					restObj = new PerTimeRestriction(restJSON);
+				}else if (className.equals("TotalAmountRestriction")) {
+					restObj = new TotalAmountRestriction(restJSON);
 				}
+
 
 				if (restObj != null) {
 					restrictionsList.add(restObj);
