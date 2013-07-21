@@ -60,7 +60,7 @@ class TotalAmountRestriction extends Restriction {
 }
 
 class PerTimeRestriction extends Restriction{
-	
+
 	private int left;
 
 	public PerTimeRestriction(JSONObject settings){
@@ -80,26 +80,38 @@ class PerTimeRestriction extends Restriction{
 	}
 }
 
-/*
+class AccountAmountRestriction extends Restriction {
 
-class AccountAmountRestriction(Restriction):
-    # FIME: needs to be implemented
-    def allows(self, attr, change, *args, **kwargs):
-        try:
-            return self.user.account[self.account_item] - \
-                    (self.quantity_change * change) > 0
-        except (KeyError):
-            return False
+	private JerryUser user;
+	private String account_item;
+	private int quantity_change;
 
-    def did(self, attr, change, *args, **kwargs):
-        self.user.account[self.account_item] -= (self.quantity_change * change)
-*/
+	public AccountAmountRestriction(JerryUser jUser, JSONObject settings){
+		user = jUser;
+		account_item = settings.optString("account_item", "");
+		quantity_change = settings.optInt("quantity_change", 1);
+	}
+
+	public boolean allows(String attr, int change){
+		return (user.account_data.optInt(account_item, 0) - (quantity_change * change)) > 0;
+	}
+	public void did(String attr, int change){
+		try {
+		user.account_data.put(account_item,
+				user.account_data.optInt(account_item, 0) - (quantity_change * change));
+
+		} catch(org.json.JSONException exc) {
+			// what the ...
+		}
+	}
+}
 
 public class JerryUser {
 	public String user_id;
 	public String device_id;
 	public String profile_name;
 	public boolean default_reaction;
+	public JSONObject account_data;
 	public HashMap<String, ArrayList<Restriction>> restrictions;
 	private JSONObject profile_state;
 
@@ -111,7 +123,10 @@ public class JerryUser {
 		}
 		profile_name = input.optString("profile_name");
 		profile_state = input;
+		account_data = input.optJSONObject("account");
+		default_reaction = input.optString("default_reaction", "deny").equals("allow");
 		JSONObject states = input.optJSONObject("states");
+
 		Iterator<String> state_names = states.keys();
 
 		LOGGER.info("loading");
@@ -141,8 +156,10 @@ public class JerryUser {
 					restObj = new BinaryRestriction(restJSON);
 				} else if (className.equals("PerTimeRestriction")) {
 					restObj = new PerTimeRestriction(restJSON);
-				}else if (className.equals("TotalAmountRestriction")) {
+				} else if (className.equals("TotalAmountRestriction")) {
 					restObj = new TotalAmountRestriction(restJSON);
+				} else if (className.equals("AccountAmountRestriction")) {
+					restObj = new AccountAmountRestriction(this, restJSON);
 				}
 
 
@@ -176,6 +193,15 @@ public class JerryUser {
 
 	public boolean can(String attr) {
 		return can(attr, 1);
+	}
+
+	public void did(String attr, int change){
+		ArrayList<Restriction> states = restrictions.get(attr);
+		if (states != null) {
+			for(int x=0; x < states.size(); x++){
+				states.get(x).did(attr, change);
+			}
+		}
 	}
 
 	public JerryUser(String n_user_id, String n_device_id, JSONObject new_state) {

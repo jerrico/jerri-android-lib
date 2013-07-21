@@ -60,15 +60,15 @@ public class JerryUserTest {
 		assertThat(user.can("share_photo", 12)).isFalse();
 
 		// // do we have credits to share photos privately?
-		// assertThat(user.can("share_photo_private")).isTrue();
-		// assertThat(user.can("share_photo_private", 2)).isTrue();
-		// assertThat(user.can("share_photo_private", 3)).isFalse();
+		assertThat(user.can("share_photo_private")).isTrue();
+		assertThat(user.can("share_photo_private", 2)).isTrue();
+		assertThat(user.can("share_photo_private", 3)).isFalse();
 
 		// // typo
-		// assertThat(user.can("take_photo_private")).isFalse();
+		assertThat(user.can("take_photo_private")).isFalse();
 
 		// // do we have credits to share photos privately?
-		// user.did("share_photo_private", 1)
+		user.did("share_photo_private", 1);
 		// mocky.calls.should.have.length_of(1)
 		// user.can("share_photo_private").should.be.ok
 		// user.did("share_photo_private", 2)
