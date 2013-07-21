@@ -113,6 +113,7 @@ public class JerryUser {
 	public String profile_name;
 	public boolean default_reaction;
 	public JSONObject account_data;
+	public boolean loaded;
 	public HashMap<String, ArrayList<Restriction>> restrictions;
 
 	private ProviderInterface provider;
@@ -120,27 +121,30 @@ public class JerryUser {
 
 	private static Logger LOGGER = Logger.getLogger("JerryUser");
 
+	private void defaultSetup(){
+		this.device_id = null;
+		this.user_id = null;
+		this.loaded = false;
+		this.profile_name = "";
+		this.provider = null;
+		this.restrictions = new HashMap<String, ArrayList<Restriction>>();
+	}
+
 	public JerryUser(String user_id, String device_id, ProviderInterface provider) {
+		this.defaultSetup();
 		this.user_id = user_id;
 		this.device_id = device_id;
-		this.profile_name = "";
 		this.provider = provider;
-		this.restrictions = new HashMap<String, ArrayList<Restriction>>();
 	}
 	
 	public JerryUser(String user_id, String device_id){
+		this.defaultSetup();
 		this.user_id = user_id;
 		this.device_id = device_id;
-		this.profile_name = "";
-		this.provider = null;
-		this.restrictions = new HashMap<String, ArrayList<Restriction>>();
 	}
 	public JerryUser(String user_id){
+		this.defaultSetup();
 		this.user_id = user_id;
-		this.device_id = null;
-		this.profile_name = "";
-		this.provider = null;
-		this.restrictions = new HashMap<String, ArrayList<Restriction>>();
 	}
 
 	public void load_state(JSONObject input){
@@ -198,6 +202,7 @@ public class JerryUser {
 				restrictions.put(restriction_name, restrictionsList);
 			}
 		}
+		this.loaded = true;
 
 	}
 
