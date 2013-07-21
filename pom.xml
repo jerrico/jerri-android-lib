@@ -17,6 +17,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20090211</version>
+        </dependency>
+
         <!-- Make sure this is below the android dependencies -->
         <dependency>
             <groupId>org.robolectric</groupId>
@@ -29,6 +35,13 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.easytesting</groupId>
+            <artifactId>fest-assert-core</artifactId>
+            <version>2.0M8</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
