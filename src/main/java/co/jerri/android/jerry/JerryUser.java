@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.lang.Class;
 import java.util.Iterator;
+import co.jerri.android.jerry.ProviderInterface;
 import org.json.*;
 import java.util.logging.Logger;
 
@@ -113,14 +114,36 @@ public class JerryUser {
 	public boolean default_reaction;
 	public JSONObject account_data;
 	public HashMap<String, ArrayList<Restriction>> restrictions;
+
+	private ProviderInterface provider;
 	private JSONObject profile_state;
 
 	private static Logger LOGGER = Logger.getLogger("JerryUser");
 
+	public JerryUser(String user_id, String device_id, ProviderInterface provider) {
+		this.user_id = user_id;
+		this.device_id = device_id;
+		this.profile_name = "";
+		this.provider = provider;
+		this.restrictions = new HashMap<String, ArrayList<Restriction>>();
+	}
+	
+	public JerryUser(String user_id, String device_id){
+		this.user_id = user_id;
+		this.device_id = device_id;
+		this.profile_name = "";
+		this.provider = null;
+		this.restrictions = new HashMap<String, ArrayList<Restriction>>();
+	}
+	public JerryUser(String user_id){
+		this.user_id = user_id;
+		this.device_id = null;
+		this.profile_name = "";
+		this.provider = null;
+		this.restrictions = new HashMap<String, ArrayList<Restriction>>();
+	}
+
 	public void load_state(JSONObject input){
-		if (restrictions == null){
-			restrictions = new HashMap<String, ArrayList<Restriction>>();
-		}
 		profile_name = input.optString("profile_name");
 		profile_state = input;
 		account_data = input.optJSONObject("account");
@@ -208,21 +231,4 @@ public class JerryUser {
 		did(attr, 1);
 	}
 
-	public JerryUser(String n_user_id, String n_device_id, JSONObject new_state) {
-		user_id = n_user_id;
-		device_id = n_device_id;
-		profile_name = null;
-		load_state(new_state);
-	}
-	
-	public JerryUser(String n_user_id, String n_device_id){
-		user_id = n_user_id;
-		device_id = n_device_id;
-		profile_name = null;
-	}
-	public JerryUser(String n_user_id){
-		user_id = n_user_id;
-		device_id = null;
-		profile_name = null;
-	}
 }
